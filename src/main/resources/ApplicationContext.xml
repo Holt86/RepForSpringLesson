@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:p="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
 
        <bean id="sonyHand" class="spring.impls.sony.SonyHand"/>
        <bean id="sonyHead" class="spring.impls.sony.SonyHead"/>
@@ -9,12 +11,26 @@
 
        <bean id="toshibaHand" class="spring.impls.toshiba.ToshibaHand"/>
        <bean id="toshibaHead" class="spring.impls.toshiba.ToshibaHead"/>
-       <bean id="toshibaLeg" class="spring.impls.toshiba.ToshibaLeg"/>
+       <bean id="toshibaLeg" class="spring.impls.toshiba.ToshibaLeg" scope="prototype"/>
 
-       <bean id="t1000" class="spring.impls.robot.ModelT1000">
-              <constructor-arg ref="sonyHand"/>
-              <constructor-arg ref="sonyHead"/>
-              <constructor-arg ref="sonyLeg"/>
+       <bean id="t1000" class="spring.impls.robot.ModelT1000" init-method="initObject" destroy-method="destroyObject">
+
+              <property name="leg" ref="toshibaLeg"/>
+              <property name="hand" ref="toshibaHand"/>
+              <property name="head" ref="toshibaHead"/>
+
+              <constructor-arg value="blue" index="0" type="java.lang.String"/>
+              <constructor-arg value="2006" index="1" type="int"/>
+              <constructor-arg value="true" index="2" type="boolean"/>
        </bean>
+
+       <bean id="t1000Empty" class="spring.impls.robot.ModelT1000"
+             p:hand-ref="sonyHand"
+             p:leg-ref="sonyLeg"
+             p:head-ref="sonyHead" lazy-init="true">
+
+       </bean>
+
+       <bean class="spring.main.MyBeanPostProcessor"/>
 
 </beans>
